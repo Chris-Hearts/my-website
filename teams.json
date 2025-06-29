@@ -1,0 +1,14 @@
+[
+  {
+    "team_name": "Hearts",
+    "primary_color": "#7A263A",
+    "secondary_color": "#FFFFFF",
+    "logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1f/Heart_of_Midlothian_FC_logo.svg"
+  },
+  {
+    "team_name": "Scotland",
+    "primary_color": "#00338D",
+    "secondary_color": "#FFFFFF",
+    "logo_url": "https://upload.wikimedia.org/wikipedia/en/9/9a/Scotland_national_football_team_badge.svg"
+  }
+]
