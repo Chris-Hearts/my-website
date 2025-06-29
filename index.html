@@ -35,7 +35,7 @@
       border-radius: 8px;
       padding: 10px;
       margin: 5px;
-      width: 120px;
+      width: 140px;
     }
   </style>
 </head>
@@ -56,15 +56,21 @@
     let players = [];
 
     async function loadData() {
-      const teamsRes = await fetch('teams.json');
-      const playersRes = await fetch('players.json');
-      teams = await teamsRes.json();
-      players = await playersRes.json();
-      populateTeams();
+      try {
+        const teamsRes = await fetch('team.json'); // <-- Corrected filename
+        const playersRes = await fetch('players.json');
+        teams = await teamsRes.json();
+        players = await playersRes.json();
+        populateTeams();
+      } catch (e) {
+        console.error('Error loading data:', e);
+        document.body.innerHTML = "<h2 style='color:red;'>Error loading team/player data. Check file names and paths.</h2>";
+      }
     }
 
     function populateTeams() {
       const select = document.getElementById('teamSelect');
+      select.innerHTML = '';
       teams.forEach(team => {
         const option = document.createElement('option');
         option.value = team.team_name;
@@ -72,14 +78,15 @@
         select.appendChild(option);
       });
       select.addEventListener('change', updateTeam);
-      updateTeam();
+      updateTeam(); // Load first team by default
     }
 
     function updateTeam() {
       const selectedTeam = document.getElementById('teamSelect').value;
       const teamData = teams.find(t => t.team_name === selectedTeam);
+      if (!teamData) return;
 
-      // Update background
+      // Update background and text color
       document.body.style.backgroundColor = teamData.primary_color;
       document.body.style.color = teamData.secondary_color;
 
@@ -90,15 +97,16 @@
       // List players
       const list = document.getElementById('playersList');
       list.innerHTML = '';
-      players.filter(p => p.team === selectedTeam)
-             .forEach(p => {
-               const div = document.createElement('div');
-               div.className = 'player';
-               div.style.backgroundColor = teamData.secondary_color;
-               div.style.color = teamData.primary_color;
-               div.textContent = `${p.player_name} (${p.position})`;
-               list.appendChild(div);
-             });
+      players
+        .filter(p => p.team === selectedTeam)
+        .forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'player';
+          div.style.backgroundColor = teamData.secondary_color;
+          div.style.color = teamData.primary_color;
+          div.textContent = `${p.player_name} (${p.position})`;
+          list.appendChild(div);
+        });
     }
 
     loadData();
