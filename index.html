@@ -8,87 +8,92 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
       margin: 0;
-      padding: 0;
+      background-color: #111;
+      color: #fff;
     }
     header {
-      background-color: #1e1e1e;
-      padding: 15px;
+      background-color: #222;
+      padding: 20px;
       text-align: center;
     }
-    header select, header button {
-      margin: 5px;
-      padding: 10px;
+    select, button {
       font-size: 16px;
-      border-radius: 5px;
-      border: none;
+      padding: 8px;
+      margin: 10px 5px;
     }
-    #pitch-container {
+    .controls {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 20px auto;
-      max-width: 900px;
     }
-    #pitch {
+    .pitch-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #004400;
+    }
+    .pitch {
+      border: 5px solid white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 900px;
+      height: 600px;
+      position: relative;
+      background-color: #0a4d0a;
       display: flex;
       flex-direction: column;
       justify-content: space-evenly;
-      flex-grow: 1;
-      width: 100%;
-      background-color: #006400;
-      border-radius: 10px;
-      padding: 10px;
     }
     .player-row {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
-      margin: 10px 0;
+      gap: 10px;
     }
     .shirt {
-      position: relative;
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background-color: #7A263A;
       border: 2px solid white;
-      margin: 5px;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      color: white;
       font-weight: bold;
-      flex-direction: column;
+      box-shadow: 0 0 6px #000;
+      background-color: #7A263A;
+      color: white;
     }
     .selector {
-      margin-top: 5px;
-      width: 90%;
+      margin-top: 4px;
       font-size: 12px;
+      width: 90%;
     }
-    footer {
+    table {
+      margin: 20px auto;
+      width: 80%;
+      border-collapse: collapse;
+      background-color: #eee;
+      color: #000;
+    }
+    table, th, td {
+      border: 1px solid #888;
+    }
+    th, td {
+      padding: 8px 12px;
       text-align: center;
-      padding: 10px;
-      background-color: #1e1e1e;
     }
-    footer button {
-      padding: 10px;
-      margin: 5px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
+    th {
+      background-color: #ccc;
     }
   </style>
 </head>
 <body>
   <header>
-    <div>
+    <div class="controls">
       <label for="teamSelect">Select Team:</label>
       <select id="teamSelect"></select>
-    </div>
-    <div>
       <label for="formationSelect">Formation:</label>
       <select id="formationSelect">
         <option>4-4-2</option>
@@ -102,20 +107,22 @@
         <option>3-6-1</option>
         <option>5-4-1</option>
       </select>
+      <div>
+        <button onclick="saveTeam()">💾 Save</button>
+        <button onclick="loadTeam()">📂 Load</button>
+        <button onclick="screenshot()">🖼️ Screenshot</button>
+      </div>
     </div>
   </header>
-
-  <div id="pitch-container">
-    <div id="pitch"></div>
+  <div class="pitch-container">
+    <div id="pitch" class="pitch"></div>
   </div>
-
-  <footer>
-    <button onclick="saveTeam()">💾 Save</button>
-    <button onclick="loadTeam()">📁 Load</button>
-    <button onclick="downloadImage()">🖼️ Screenshot</button>
-  </footer>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <table id="squadTable">
+    <thead>
+      <tr><th>#</th><th>Name</th><th>Position</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
   <script>
     let teams = [];
     let players = [];
@@ -141,14 +148,15 @@
     }
 
     function populateTeams() {
-      const select = document.getElementById('teamSelect');
+      const teamSelect = document.getElementById('teamSelect');
+      teamSelect.innerHTML = "";
       teams.forEach(team => {
         const option = document.createElement('option');
         option.value = team.team_name;
         option.textContent = team.team_name;
-        select.appendChild(option);
+        teamSelect.appendChild(option);
       });
-      select.addEventListener('change', updatePitch);
+      teamSelect.addEventListener('change', updatePitch);
       document.getElementById('formationSelect').addEventListener('change', updatePitch);
       updatePitch();
     }
@@ -171,59 +179,81 @@
     }
 
     function updatePitch() {
-      const selectedTeam = document.getElementById('teamSelect').value;
+      const team = document.getElementById('teamSelect').value;
       const formation = document.getElementById('formationSelect').value;
-      const teamData = teams.find(t => t.team_name === selectedTeam);
+      const teamData = teams.find(t => t.team_name === team);
       const pitch = document.getElementById('pitch');
       pitch.innerHTML = '';
-
       if (!teamData) return;
 
+      pitch.style.backgroundColor = teamData.primary_color;
+      pitch.style.color = teamData.secondary_color;
+
+      const squadTable = document.getElementById('squadTable').querySelector('tbody');
+      squadTable.innerHTML = '';
+
       const lineCounts = formations[formation];
-      lineCounts.forEach((count, lineIndex) => {
+      let playerNum = 1;
+
+      lineCounts.forEach((count, i) => {
         const row = document.createElement('div');
         row.className = 'player-row';
-        const posType = getPositionType(lineIndex, lineCounts.length);
-        const teamPlayers = players.filter(p => p.team === selectedTeam && p.position === posType)
-                                   .sort((a, b) => a.player_name.split(' ').slice(-1)[0].localeCompare(b.player_name.split(' ').slice(-1)[0]));
-        for (let i = 0; i < count; i++) {
+        const pos = getPositionType(i, lineCounts.length);
+        const teamPlayers = players.filter(p => p.team === team && p.position === pos)
+                                   .sort((a,b) => a.player_name.split(' ').pop().localeCompare(b.player_name.split(' ').pop()));
+        for (let j = 0; j < count; j++) {
           const shirt = document.createElement('div');
           shirt.className = 'shirt';
-          const span = document.createElement('span');
-          span.textContent = `${[1,2,3,4,5,6,7,8,9,10,11][i] || '?'}`;
+          shirt.innerHTML = `<div>${playerNum}</div>`;
           const sel = document.createElement('select');
           sel.className = 'selector';
           sel.innerHTML = '<option value="">Select</option>' + teamPlayers.map(p => `<option>${p.player_name}</option>`).join('');
-          sel.onchange = () => span.textContent = sel.value ? sel.value.slice(0,2) : '?';
-          shirt.appendChild(span);
+          sel.onchange = () => {
+            const tr = squadTable.querySelector(`tr[data-num="${playerNum}"]`);
+            if (sel.value) {
+              if (tr) {
+                tr.children[1].textContent = sel.value;
+                tr.children[2].textContent = pos;
+              } else {
+                const row = document.createElement('tr');
+                row.dataset.num = playerNum;
+                row.innerHTML = `<td>${playerNum}</td><td>${sel.value}</td><td>${pos}</td>`;
+                squadTable.appendChild(row);
+              }
+            } else if (tr) {
+              squadTable.removeChild(tr);
+            }
+          };
           shirt.appendChild(sel);
           row.appendChild(shirt);
+          playerNum++;
         }
         pitch.appendChild(row);
       });
     }
 
     function saveTeam() {
-      const selected = Array.from(document.querySelectorAll('.shirt select')).map(s => s.value);
-      localStorage.setItem('savedTeam', JSON.stringify(selected));
-      alert("Team saved!");
+      const team = document.getElementById('teamSelect').value;
+      const formation = document.getElementById('formationSelect').value;
+      const squad = Array.from(document.querySelectorAll('.selector')).map(sel => sel.value);
+      localStorage.setItem('savedTeam', JSON.stringify({ team, formation, squad }));
+      alert('Team saved!');
     }
 
     function loadTeam() {
-      const data = JSON.parse(localStorage.getItem('savedTeam') || "[]");
-      document.querySelectorAll('.shirt select').forEach((s, i) => {
-        s.value = data[i] || '';
-        s.dispatchEvent(new Event('change'));
-      });
+      const saved = JSON.parse(localStorage.getItem('savedTeam'));
+      if (!saved) return alert('No saved team');
+      document.getElementById('teamSelect').value = saved.team;
+      document.getElementById('formationSelect').value = saved.formation;
+      updatePitch();
+      setTimeout(() => {
+        document.querySelectorAll('.selector').forEach((sel, i) => sel.value = saved.squad[i] || '');
+        document.querySelectorAll('.selector').forEach(sel => sel.dispatchEvent(new Event('change')));
+      }, 100);
     }
 
-    function downloadImage() {
-      html2canvas(document.getElementById('pitch')).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'team.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+    function screenshot() {
+      alert('Use your device's screenshot feature.');
     }
 
     loadData();
