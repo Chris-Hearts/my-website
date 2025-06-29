@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +7,8 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #222;
+      background-color: #2E7D32;
       color: #fff;
-      text-align: center;
       margin: 0;
     }
     header {
@@ -19,29 +17,27 @@
       justify-content: center;
       gap: 10px;
       padding: 10px;
-      background-color: #333;
+      background-color: #1B5E20;
     }
     select, button {
       padding: 10px;
       font-size: 16px;
-    }
-    #actions {
-      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 5px;
     }
     #pitch-container {
-      height: calc(100vh - 140px);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
-      box-sizing: border-box;
+      padding: 20px;
     }
     #pitch {
       width: 95%;
       max-width: 900px;
-      height: 100%;
-      background: radial-gradient(circle at center, #0a501f, #064d1a);
-      border: 4px solid white;
+      aspect-ratio: 2 / 3;
+      background: radial-gradient(circle, #43A047 0%, #2E7D32 100%);
+      border: 5px solid white;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
@@ -53,36 +49,40 @@
     .player-row {
       display: flex;
       justify-content: center;
-      flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 10px;
+      flex-wrap: wrap;
     }
     .shirt {
       background: #7A263A;
       border: 2px solid white;
       border-radius: 50%;
-      width: 70px;
-      height: 70px;
-      font-size: 12px;
+      width: 80px;
+      height: 80px;
+      font-size: 13px;
       font-weight: bold;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
       position: relative;
       text-align: center;
-      flex-direction: column;
       box-shadow: 0 0 6px #000;
+      flex-direction: column;
     }
     .selector {
-      display: block;
-      margin-top: 4px;
+      width: 120px;
       font-size: 12px;
-      width: 80px;
-      border-radius: 6px;
+      margin-top: 4px;
       padding: 4px;
+      border-radius: 4px;
       border: none;
+    }
+    .buttons {
+      text-align: center;
+      padding: 10px;
+    }
+    .buttons button {
+      margin: 5px;
     }
   </style>
 </head>
@@ -105,14 +105,14 @@
     </select>
   </header>
 
-  <div id="actions">
-    <button onclick="saveTeam()">💾 Save</button>
-    <button onclick="loadTeam()">📂 Load</button>
-    <button onclick="screenshot()">📸 Screenshot</button>
-  </div>
-
   <div id="pitch-container">
     <div id="pitch"></div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="saveTeam()">💾 Save</button>
+    <button onclick="loadTeam()">📂 Load</button>
+    <button onclick="downloadScreenshot()">📷 Screenshot</button>
   </div>
 
   <script>
@@ -129,10 +129,6 @@
       "4-5-1": [1, 4, 5, 1],
       "3-6-1": [1, 3, 6, 1],
       "5-4-1": [1, 5, 4, 1]
-    };
-
-    const shirtNumbers = {
-      GK: [1], DEF: [2,3,4,5,6], MID: [7,8,11,12,14], FWD: [9,10,19,20]
     };
 
     async function loadData() {
@@ -158,14 +154,19 @@
 
     function getPositionType(index, total) {
       if (index === 0) return 'GK';
-      if (total >= 5) {
+      if (total === 5) {
         if (index === 1) return 'DEF';
         if (index === 2 || index === 3) return 'MID';
         if (index === 4) return 'FWD';
-      } else {
-        const map = ['GK', 'DEF', 'MID', 'FWD'];
-        return map[index] || 'MID';
+      } else if (total === 4) {
+        if (index === 1) return 'DEF';
+        if (index === 2) return 'MID';
+        if (index === 3) return 'FWD';
+      } else if (total === 3) {
+        if (index === 1) return 'DEF';
+        if (index === 2) return 'FWD';
       }
+      return 'MID';
     }
 
     function updatePitch() {
@@ -177,22 +178,26 @@
 
       if (!teamData) return;
 
+      pitch.style.background = "radial-gradient(circle, #43A047 0%, #2E7D32 100%)";
+      pitch.style.color = teamData.secondary_color;
+
       const lineCounts = formations[formation];
       lineCounts.forEach((count, lineIndex) => {
         const row = document.createElement('div');
         row.className = 'player-row';
         const posType = getPositionType(lineIndex, lineCounts.length);
-        const teamPlayers = players.filter(p => p.team === selectedTeam && p.position === posType)
-                                   .sort((a,b) => a.player_name.split(" ").slice(-1)[0].localeCompare(b.player_name.split(" ").slice(-1)[0]));
+        const teamPlayers = players
+          .filter(p => p.team === selectedTeam && p.position === posType)
+          .sort((a, b) => a.player_name.split(" ").slice(-1)[0].localeCompare(b.player_name.split(" ").slice(-1)[0]));
         for (let i = 0; i < count; i++) {
           const shirt = document.createElement('div');
           shirt.className = 'shirt';
           const span = document.createElement('span');
-          span.textContent = shirtNumbers[posType][i] || '?';
+          span.textContent = (lineIndex === 0 && i === 0) ? '1' : (i + 2);
           const sel = document.createElement('select');
           sel.className = 'selector';
-          sel.innerHTML = '<option value="">Select</option>' + teamPlayers.map(p => `<option>${p.player_name}</option>`).join('');
-          sel.onchange = () => span.textContent = sel.value ? (i + 1).toString() : (shirtNumbers[posType][i] || '?');
+          sel.innerHTML = '<option value="">Select</option>' + teamPlayers.map(p => \`<option>\${p.player_name}</option>\`).join('');
+          sel.onchange = () => span.textContent = sel.value ? (i + 2) : '?';
           shirt.appendChild(span);
           shirt.appendChild(sel);
           row.appendChild(shirt);
@@ -202,23 +207,33 @@
     }
 
     function saveTeam() {
-      const selects = document.querySelectorAll('.selector');
-      const picks = Array.from(selects).map(sel => sel.value);
-      localStorage.setItem('savedTeam', JSON.stringify(picks));
-      alert("Team saved!");
+      const data = [];
+      document.querySelectorAll('.player-row').forEach(row => {
+        const line = [];
+        row.querySelectorAll('select').forEach(select => {
+          line.push(select.value);
+        });
+        data.push(line);
+      });
+      localStorage.setItem('savedTeam', JSON.stringify(data));
+      alert('Team saved!');
     }
 
     function loadTeam() {
-      const saved = JSON.parse(localStorage.getItem('savedTeam') || '[]');
-      const selects = document.querySelectorAll('.selector');
-      selects.forEach((sel, i) => {
-        if (saved[i]) sel.value = saved[i];
-        sel.dispatchEvent(new Event('change'));
+      const data = JSON.parse(localStorage.getItem('savedTeam') || '[]');
+      if (data.length === 0) return;
+      document.querySelectorAll('.player-row').forEach((row, i) => {
+        row.querySelectorAll('select').forEach((select, j) => {
+          if (data[i] && data[i][j]) {
+            select.value = data[i][j];
+            select.previousSibling.textContent = j + 2;
+          }
+        });
       });
     }
 
-    function screenshot() {
-      html2canvas(document.getElementById('pitch')).then(canvas => {
+    function downloadScreenshot() {
+      html2canvas(document.getElementById("pitch")).then(canvas => {
         const link = document.createElement('a');
         link.download = 'team.png';
         link.href = canvas.toDataURL();
@@ -228,6 +243,6 @@
 
     loadData();
   </script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
