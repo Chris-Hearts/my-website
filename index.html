@@ -121,7 +121,7 @@
     };
 
     async function loadData() {
-      const teamsRes = await fetch('team.json');
+      const teamsRes = await fetch('teams.json');
       const playersRes = await fetch('players.json');
       teams = await teamsRes.json();
       players = await playersRes.json();
