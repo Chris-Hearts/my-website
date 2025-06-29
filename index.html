@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,50 +8,54 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #2E7D32;
+      background-color: #0b3d0b;
       color: #fff;
+      text-align: center;
       margin: 0;
     }
     header {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 10px;
-      padding: 10px;
-      background-color: #1B5E20;
+      padding: 20px;
+      background-color: #222;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .buttons {
+      margin-top: 10px;
     }
     select, button {
       padding: 10px;
       font-size: 16px;
-      border-radius: 8px;
+      border-radius: 5px;
       border: none;
-      margin-top: 5px;
     }
     #pitch-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
       padding: 20px;
-    }
-    #pitch {
-      width: 95%;
-      max-width: 900px;
-      aspect-ratio: 2 / 3;
-      background: radial-gradient(circle, #43A047 0%, #2E7D32 100%);
-      border: 5px solid white;
-      border-radius: 12px;
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
-      position: relative;
-      overflow: hidden;
+      align-items: center;
+    }
+    #pitch {
+      width: 100%;
+      max-width: 900px;
+      background: linear-gradient(to bottom, #0b6623 0%, #228B22 100%);
+      border: 5px solid white;
+      border-radius: 12px;
       padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     .player-row {
       display: flex;
       justify-content: center;
       gap: 10px;
-      flex-wrap: wrap;
     }
     .shirt {
       background: #7A263A;
@@ -58,61 +63,72 @@
       border-radius: 50%;
       width: 80px;
       height: 80px;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: bold;
       color: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      position: relative;
-      text-align: center;
-      box-shadow: 0 0 6px #000;
-      flex-direction: column;
+      box-shadow: 0 0 5px black;
     }
     .selector {
-      width: 120px;
-      font-size: 12px;
-      margin-top: 4px;
-      padding: 4px;
-      border-radius: 4px;
-      border: none;
+      margin-top: 5px;
+      width: 90px;
     }
-    .buttons {
-      text-align: center;
+    #squadList {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+      background: #fff;
+      color: #000;
+      border-radius: 5px;
       padding: 10px;
     }
-    .buttons button {
-      margin: 5px;
+    #squadList table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #squadList th, #squadList td {
+      padding: 8px;
+      border-bottom: 1px solid #ccc;
+    }
+    #squadList th {
+      background-color: #f2f2f2;
     }
   </style>
 </head>
 <body>
   <header>
-    <label for="teamSelect">Select Team:</label>
-    <select id="teamSelect"></select>
-    <label for="formationSelect">Formation:</label>
-    <select id="formationSelect">
-      <option>4-4-2</option>
-      <option>4-3-3</option>
-      <option>3-5-2</option>
-      <option>4-2-3-1</option>
-      <option>4-1-4-1</option>
-      <option>3-4-3</option>
-      <option>5-3-2</option>
-      <option>4-5-1</option>
-      <option>3-6-1</option>
-      <option>5-4-1</option>
-    </select>
+    <div class="controls">
+      <label for="teamSelect">Select Team:</label>
+      <select id="teamSelect"></select>
+
+      <label for="formationSelect">Formation:</label>
+      <select id="formationSelect">
+        <option>4-4-2</option>
+        <option>4-3-3</option>
+        <option>3-5-2</option>
+        <option>4-2-3-1</option>
+        <option>4-1-4-1</option>
+        <option>3-4-3</option>
+        <option>5-3-2</option>
+        <option>4-5-1</option>
+        <option>3-6-1</option>
+        <option>5-4-1</option>
+      </select>
+
+      <div class="buttons">
+        <button onclick="saveSquad()">Save</button>
+        <button onclick="loadSquad()">Load</button>
+        <button onclick="screenshot()">Screenshot</button>
+      </div>
+    </div>
   </header>
 
   <div id="pitch-container">
     <div id="pitch"></div>
-  </div>
-
-  <div class="buttons">
-    <button onclick="saveTeam()">💾 Save</button>
-    <button onclick="loadTeam()">📂 Load</button>
-    <button onclick="downloadScreenshot()">📷 Screenshot</button>
+    <div id="squadList"><table><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody id="squadTable"></tbody></table></div>
   </div>
 
   <script>
@@ -154,18 +170,9 @@
 
     function getPositionType(index, total) {
       if (index === 0) return 'GK';
-      if (total === 5) {
-        if (index === 1) return 'DEF';
-        if (index === 2 || index === 3) return 'MID';
-        if (index === 4) return 'FWD';
-      } else if (total === 4) {
-        if (index === 1) return 'DEF';
-        if (index === 2) return 'MID';
-        if (index === 3) return 'FWD';
-      } else if (total === 3) {
-        if (index === 1) return 'DEF';
-        if (index === 2) return 'FWD';
-      }
+      if (total === 5) return ['DEF','MID','MID','MID','FWD'][index] || 'MID';
+      if (total === 4) return ['GK','DEF','MID','FWD'][index] || 'MID';
+      if (total === 3) return ['GK','DEF','FWD'][index] || 'MID';
       return 'MID';
     }
 
@@ -174,75 +181,69 @@
       const formation = document.getElementById('formationSelect').value;
       const teamData = teams.find(t => t.team_name === selectedTeam);
       const pitch = document.getElementById('pitch');
+      const squadTable = document.getElementById('squadTable');
       pitch.innerHTML = '';
+      squadTable.innerHTML = '';
 
       if (!teamData) return;
 
-      pitch.style.background = "radial-gradient(circle, #43A047 0%, #2E7D32 100%)";
-      pitch.style.color = teamData.secondary_color;
-
       const lineCounts = formations[formation];
+      let shirtNumber = 1;
+
       lineCounts.forEach((count, lineIndex) => {
         const row = document.createElement('div');
         row.className = 'player-row';
         const posType = getPositionType(lineIndex, lineCounts.length);
-        const teamPlayers = players
-          .filter(p => p.team === selectedTeam && p.position === posType)
-          .sort((a, b) => a.player_name.split(" ").slice(-1)[0].localeCompare(b.player_name.split(" ").slice(-1)[0]));
+        const teamPlayers = players.filter(p => p.team === selectedTeam && p.position === posType)
+                                   .sort((a,b) => a.player_name.split(" ").pop().localeCompare(b.player_name.split(" ").pop()));
         for (let i = 0; i < count; i++) {
           const shirt = document.createElement('div');
           shirt.className = 'shirt';
           const span = document.createElement('span');
-          span.textContent = (lineIndex === 0 && i === 0) ? '1' : (i + 2);
+          span.textContent = shirtNumber;
+
           const sel = document.createElement('select');
           sel.className = 'selector';
           sel.innerHTML = '<option value="">Select</option>' + teamPlayers.map(p => \`<option>\${p.player_name}</option>\`).join('');
-          sel.onchange = () => span.textContent = sel.value ? (i + 2) : '?';
+          sel.onchange = () => {
+            const value = sel.value;
+            const row = squadTable.querySelector('tr[data-num="'+shirtNumber+'"]');
+            if (row) {
+              row.cells[1].textContent = value;
+            } else {
+              const newRow = document.createElement('tr');
+              newRow.dataset.num = shirtNumber;
+              newRow.innerHTML = \`<td>\${shirtNumber}</td><td>\${value}</td><td>\${posType}</td>\`;
+              squadTable.appendChild(newRow);
+            }
+          };
           shirt.appendChild(span);
           shirt.appendChild(sel);
           row.appendChild(shirt);
+          shirtNumber++;
         }
         pitch.appendChild(row);
       });
     }
 
-    function saveTeam() {
-      const data = [];
-      document.querySelectorAll('.player-row').forEach(row => {
-        const line = [];
-        row.querySelectorAll('select').forEach(select => {
-          line.push(select.value);
-        });
-        data.push(line);
-      });
-      localStorage.setItem('savedTeam', JSON.stringify(data));
-      alert('Team saved!');
+    function saveSquad() {
+      const selects = document.querySelectorAll('.selector');
+      const data = Array.from(selects).map(sel => sel.value);
+      localStorage.setItem('savedSquad', JSON.stringify(data));
+      alert('Squad saved!');
     }
 
-    function loadTeam() {
-      const data = JSON.parse(localStorage.getItem('savedTeam') || '[]');
-      if (data.length === 0) return;
-      document.querySelectorAll('.player-row').forEach((row, i) => {
-        row.querySelectorAll('select').forEach((select, j) => {
-          if (data[i] && data[i][j]) {
-            select.value = data[i][j];
-            select.previousSibling.textContent = j + 2;
-          }
-        });
-      });
+    function loadSquad() {
+      const data = JSON.parse(localStorage.getItem('savedSquad') || '[]');
+      const selects = document.querySelectorAll('.selector');
+      data.forEach((val, i) => { if (selects[i]) selects[i].value = val; selects[i].dispatchEvent(new Event('change')); });
     }
 
-    function downloadScreenshot() {
-      html2canvas(document.getElementById("pitch")).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'team.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
+    function screenshot() {
+      alert('Screenshot functionality can be implemented with html2canvas or similar.');
     }
 
     loadData();
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </body>
 </html>
