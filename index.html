@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Team Builder</title>
+  <!-- suppress default favicon requests -->
+  <link rel="icon" href="data:," />
   <style>
-    /* existing CSS unchanged */
     body { font-family: Arial, sans-serif; margin: 0; background-color: #111; color: #fff; }
     header { background-color: #222; padding: 20px; text-align: center; }
     select, button { font-size: 16px; padding: 8px; margin: 10px 5px; }
@@ -83,18 +84,34 @@
       const teamSelect = document.getElementById('teamSelect');
       teamSelect.innerHTML = '';
       teams.forEach(t => {
-        const option = document.createElement('option');
-        option.value = t.team_name; option.textContent = t.team_name;
-        teamSelect.appendChild(option);
+        const opt = document.createElement('option');
+        opt.value = t.team_name;
+        opt.textContent = t.team_name;
+        teamSelect.appendChild(opt);
       });
-      teamSelect.addEventListener('change', updatePitch);
+      // default to first team
+      if (teams.length) teamSelect.value = teams[0].team_name;
       document.getElementById('formationSelect')
         .addEventListener('change', updatePitch);
+      teamSelect.addEventListener('change', updatePitch);
       updatePitch();
     }
 
     function getPositionType(index, total) {
-      // same logic as before
+      if (index === 0) return 'GK';
+      if (total === 5) {
+        if (index === 1) return 'DEF';
+        if (index === 2 || index === 3) return 'MID';
+        if (index === 4) return 'FWD';
+      } else if (total === 4) {
+        if (index === 1) return 'DEF';
+        if (index === 2) return 'MID';
+        if (index === 3) return 'FWD';
+      } else if (total === 3) {
+        if (index === 1) return 'DEF';
+        if (index === 2) return 'FWD';
+      }
+      return 'MID';
     }
 
     function updatePitch() {
@@ -110,16 +127,17 @@
       const tbody = document.querySelector('#squadTable tbody');
       tbody.innerHTML = '';
 
-      const lineCounts = formations[formation];
+      const lineCounts = formations[formation] || [];
       let playerNum = 1;
 
-      lineCounts.forEach((count, lineIndex) => {
+      lineCounts.forEach((count, i) => {
         const rowDiv = document.createElement('div');
         rowDiv.className = 'player-row';
-        const pos = getPositionType(lineIndex, lineCounts.length);
-        const teamPlayers = players.filter(p => p.team === team && p.position === pos)
-                                  .sort((a,b) => a.player_name.split(' ').pop()
-                                  .localeCompare(b.player_name.split(' ').pop()));
+        const pos = getPositionType(i, lineCounts.length);
+        const teamPlayers = players
+          .filter(p => p.team === team && p.position === pos)
+          .sort((a, b) => a.player_name.split(' ').pop()
+            .localeCompare(b.player_name.split(' ').pop()));
         for (let j = 0; j < count; j++) {
           const shirt = document.createElement('div');
           shirt.className = 'shirt';
@@ -143,43 +161,42 @@
     function updateSelections() {
       const tbody = document.querySelector('#squadTable tbody');
       tbody.innerHTML = '';
-
-      // Gather selections
       const selections = Array.from(document.querySelectorAll('.selector'))
-        .map(s => ({ num: parseInt(s.dataset.num), name: s.value, pos: s.dataset.pos }))
+        .map(s => ({ num: +s.dataset.num, name: s.value, pos: s.dataset.pos }))
         .filter(s => s.name);
-
-      // Sort by position order then by number
       const order = { GK: 1, DEF: 2, MID: 3, FWD: 4 };
       selections.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
-
-      // Populate table with all selections
       selections.forEach(s => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
         tbody.appendChild(tr);
       });
-
-      // Disable already-selected options in other selectors
       const selectedNames = selections.map(s => s.name);
       document.querySelectorAll('.selector').forEach(sel => {
         sel.querySelectorAll('option').forEach(opt => {
-          if (opt.value && selectedNames.includes(opt.value) && sel.value !== opt.value) {
-            opt.disabled = true;
-          } else {
-            opt.disabled = false;
-          }
+          opt.disabled = (!!opt.value && selectedNames.includes(opt.value) && sel.value !== opt.value);
         });
       });
     }
 
     function saveTeam() {
-      // unchanged
+      const team = document.getElementById('teamSelect').value;
+      const formation = document.getElementById('formationSelect').value;
+      const squad = Array.from(document.querySelectorAll('.selector')).map(s => s.value);
+      localStorage.setItem('savedTeam', JSON.stringify({ team, formation, squad }));
+      alert('Team saved!');
     }
 
     function loadTeam() {
-      // unchanged, but ensure it calls updateSelections after setting
-      // selectors
+      const saved = JSON.parse(localStorage.getItem('savedTeam'));
+      if (!saved) return alert('No saved team');
+      document.getElementById('teamSelect').value = saved.team;
+      document.getElementById('formationSelect').value = saved.formation;
+      updatePitch();
+      setTimeout(() => {
+        document.querySelectorAll('.selector').forEach((sel, i) => sel.value = saved.squad[i] || '');
+        document.querySelectorAll('.selector').forEach(sel => sel.dispatchEvent(new Event('change')));
+      }, 50);
     }
 
     function screenshot() {
