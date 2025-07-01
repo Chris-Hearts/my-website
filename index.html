@@ -66,12 +66,23 @@
         }
         teams = await teamsRes.json();
         players = await playersRes.json();
+        // Populate team dropdown
         const ts = document.getElementById('teamSelect');
         ts.innerHTML = '';
-        teams.forEach(t => ts.append(new Option(t.team_name, t.team_name)));
-        if (teams.length) ts.value = teams[0].team_name;
-        ts.onchange = updatePitch;
-        document.getElementById('formationSelect').onchange = updatePitch;
+        teams.forEach(team => {
+          const opt = document.createElement('option');
+          opt.value = team.team_name;
+          opt.textContent = team.team_name;
+          ts.appendChild(opt);
+        });
+        // Select first team by default
+        if (teams.length) {
+          ts.selectedIndex = 0;
+        }
+        // Attach event listeners
+        ts.addEventListener('change', updatePitch);
+        document.getElementById('formationSelect').addEventListener('change', updatePitch);
+        // Initial render
         updatePitch();
       } catch (err) {
         console.error('Exception loading JSON:', err);
@@ -95,7 +106,46 @@
       return 'MID';
     }
 
-    $1
+    // Render pitch and shirts
+    function updatePitch() {
+      const team = document.getElementById('teamSelect').value;
+      const formation = document.getElementById('formationSelect').value;
+      const teamData = teams.find(t => t.team_name === team);
+      const pitch = document.getElementById('pitch');
+      pitch.innerHTML = '';
+      if (!teamData) return;
+      // Apply team colors
+      pitch.style.backgroundColor = teamData.primary_color;
+      pitch.style.borderColor = teamData.secondary_color;
+      // Reset selections and table
+      selections = {};
+      document.querySelector('#squadTable tbody').innerHTML = '';
+      const lineCounts = formations[formation] || [];
+      let playerNum = 1;
+      lineCounts.forEach((count, i) => {
+        const row = document.createElement('div');
+        row.className = 'player-row';
+        const pos = getPositionType(i, lineCounts.length);
+        const options = players
+          .filter(p => p.team === team && p.position === pos)
+          .sort((a, b) => a.player_name.localeCompare(b.player_name))
+          .map(p => p.player_name);
+        for (let j = 0; j < count; j++) {
+          const shirt = document.createElement('div');
+          shirt.className = 'shirt';
+          shirt.dataset.num = playerNum;
+          shirt.dataset.pos = pos;
+          shirt.dataset.initial = '';
+          // Shirt colors
+          shirt.style.backgroundColor = teamData.primary_color;
+          shirt.style.borderColor = teamData.secondary_color;
+          shirt.addEventListener('click', () => openModal(shirt, options));
+          row.appendChild(shirt);
+          playerNum++;
+        }
+        pitch.appendChild(row);
+      });
+    }
 
     // Modal for selecting player
     function openModal(shirt, opts) {
