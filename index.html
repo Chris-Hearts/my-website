@@ -23,6 +23,35 @@
     }
     th, td { border: 1px solid #888; padding: 8px 12px; text-align: center; }
     th { background: #ccc; }
+      .player-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .shirt {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid white;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+    }
+    .shirt::after {
+      content: attr(data-pos);
+      font-size: 14px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      pointer-events: none;
+    }
+    .shirt.filled::after {
+      content: attr(data-initial);
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
