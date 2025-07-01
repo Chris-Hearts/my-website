@@ -7,8 +7,18 @@
   <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #111; color: #fff; }
     header { background: #222; padding: 20px; text-align: center; }
-    .controls { display: flex; flex-direction: column; align-items: center; }
-    select, button { font-size: 16px; padding: 8px; margin: 10px; }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    select, button {
+      font-size: 14px;
+      padding: 4px 6px;
+      margin: 4px;
+      min-width: auto;
+    }
     .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
     table {
       margin: 20px auto;
