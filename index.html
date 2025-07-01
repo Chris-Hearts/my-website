@@ -149,7 +149,8 @@
     }
 
     function refreshTable() {
-      const tbody = document.querySelector('#squadTable tbody'); tbody.innerHTML = '';
+      const tbody = document.querySelector('#squadTable tbody');
+      tbody.innerHTML = '';
       const arr = Object.entries(selections).map(([n, s]) => ({ num: +n, ...s }));
       const order = { GK: 1, DEF: 2, MID: 3, FWD: 4 };
       arr.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
@@ -157,8 +158,6 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
         tbody.appendChild(tr);
-        const shirt = document.querySelector(`.shirt[data-num='\${s.num}']`);
-        shirt.classList.add('filled'); shirt.dataset.initial = s.name.split(' ').pop();
       });
     }
 
