@@ -10,12 +10,24 @@
     .controls { display: flex; flex-direction: column; align-items: center; }
     select, button { font-size: 16px; padding: 8px; margin: 10px; }
     .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
-    $1
+    table {
+      margin: 20px auto;
+      width: 94%;
+      border-collapse: collapse;
+      background-color: #eee;
       color: #000;
     }
-    th, td { border: 1px solid #888; padding: 8px 12px; text-align: center; }
-    th { background: #ccc; }
-      .player-row {
+    table, th, td {
+      border: 1px solid #888;
+    }
+    th, td {
+      padding: 8px 12px;
+      text-align: center;
+    }
+    th {
+      background: #ccc;
+    }
+    .player-row {
       display: flex;
       justify-content: center;
       gap: 10px;
