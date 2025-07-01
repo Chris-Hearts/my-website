@@ -21,8 +21,8 @@
     }
     .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
     table {
-      /* keep default styling */
-      margin: 20px auto;
+      /* align under pitch */
+      margin: 20px 0 20px 3%;
       width: 94%;
       max-width: 900px;
       border-collapse: collapse;
@@ -55,8 +55,8 @@
       cursor: pointer;
     }
     .shirt::after {
-      content: attr(data-pos);
-      font-size: 14px;
+      content: "👕";
+      font-size: 36px;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -66,7 +66,13 @@
     }
     .shirt.filled::after {
       content: attr(data-initial);
-      font-size: 12px;
+      font-size: 14px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      pointer-events: none;
     }
     .modal-backdrop {
       position: fixed;
