@@ -15,7 +15,22 @@
     .pitch { border: 5px solid white; border-radius: 12px; width: 90%; max-width: 900px; height: 600px; position: relative; background-color: #0a4d0a; display: flex; flex-direction: column; justify-content: space-evenly; }
     .player-row { display: flex; justify-content: center; gap: 10px; }
     .shirt { width: 80px; height: 80px; border-radius: 50%; border: 2px solid white; display: flex; flex-direction: column; justify-content: center; align-items: center; font-weight: bold; box-shadow: 0 0 6px #000; background-color: #7A263A; color: white; }
-    .selector { margin-top: 4px; font-size: 12px; width: 90%; }
+    .selector {
+      margin-top: 4px;
+      font-size: 14px;
+      width: 100%;
+      max-width: 120px;
+      padding: 8px 32px 8px 12px;
+      border-radius: 6px;
+      border: none;
+      background-color: rgba(255,255,255,0.9);
+      color: #000;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='5'><path fill='%23000' d='M0,0 L10,0 L5,5 Z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
     table { margin: 20px auto; width: 80%; border-collapse: collapse; background-color: #eee; color: #000; }
     table, th, td { border: 1px solid #888; }
     th, td { padding: 8px 12px; text-align: center; }
