@@ -95,47 +95,68 @@
       return 'MID';
     }
 
-    function updatePitch() {
-      const team = document.getElementById('teamSelect').value;
-      const formation = document.getElementById('formationSelect').value;
-      const teamData = teams.find(t => t.team_name === team);
-      const pitch = document.getElementById('pitch');
-      pitch.innerHTML = '';
-      if (!teamData) return;
-      pitch.style.backgroundColor = teamData.primary_color;
-      pitch.style.color = teamData.secondary_color;
+    $1
 
-      // Clear selections and table
-      selections = {};
-      document.querySelector('#squadTable tbody').innerHTML = '';
+    // Modal for selecting player
+    function openModal(shirt, opts) {
+      const bg = document.createElement('div'); bg.className = 'modal-backdrop';
+      const m = document.createElement('div'); m.className = 'modal';
+      m.innerHTML = `<h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3><ul>` +
+        opts.map(o => `<li>${o}</li>`).join('') + `</ul>`;
+      m.querySelectorAll('li').forEach(li => li.onclick = () => {
+        const name = li.textContent, num = shirt.dataset.num, pos = shirt.dataset.pos;
+        shirt.classList.add('filled');
+        shirt.dataset.initial = name.split(' ').pop();
+        selections[num] = { name, pos };
+        document.body.removeChild(bg);
+        refreshTable();
+      });
+      bg.appendChild(m);
+      document.body.appendChild(bg);
+    }
 
-      const lineCounts = formations[formation] || [];
-      let playerNum = 1;
-
-      lineCounts.forEach((count, i) => {
-        const row = document.createElement('div');
-        row.className = 'player-row';
-        const pos = getPositionType(i, lineCounts.length);
-        const teamPlayers = players
-          .filter(p => p.team === team && p.position === pos)
-          .sort((a, b) => a.player_name.split(' ').pop().localeCompare(b.player_name.split(' ').pop()));
-        for (let j = 0; j < count; j++) {
-          const shirt = document.createElement('div');
-          shirt.className = 'shirt';
-          shirt.dataset.num = playerNum;
-          shirt.dataset.pos = pos;
-          shirt.dataset.initial = '';
-          // Use team colors
-          shirt.style.backgroundColor = teamData.primary_color;
-          shirt.style.borderColor = teamData.secondary_color;
-          shirt.onclick = () => openModal(shirt, teamPlayers.map(p => p.player_name));
-          row.appendChild(shirt);
-          playerNum++;
-        }
-        pitch.appendChild(row);
+    // Update squad table
+    function refreshTable() {
+      const tbody = document.querySelector('#squadTable tbody'); tbody.innerHTML = '';
+      const arr = Object.entries(selections).map(([n, s]) => ({ num: +n, ...s }));
+      const order = { GK: 1, DEF: 2, MID: 3, FWD: 4 };
+      arr.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
+      arr.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
+        tbody.appendChild(tr);
       });
     }
 
+    // Save/load team
+    function saveTeam() {
+      localStorage.setItem('savedTeam', JSON.stringify({
+        team: document.getElementById('teamSelect').value,
+        formation: document.getElementById('formationSelect').value,
+        selections
+      }));
+      alert('Team saved!');
+    }
+
+    function loadTeam() {
+      const s = JSON.parse(localStorage.getItem('savedTeam') || '{}');
+      if (s.selections) {
+        document.getElementById('teamSelect').value = s.team;
+        document.getElementById('formationSelect').value = s.formation;
+        updatePitch();
+        setTimeout(() => {
+          Object.entries(s.selections).forEach(([n, sel]) => {
+            const shirt = document.querySelector(`.shirt[data-num='${n}']`);
+            shirt.classList.add('filled');
+            shirt.dataset.initial = sel.name.split(' ').pop();
+            selections[n] = sel;
+          });
+          refreshTable();
+        }, 50);
+      }
+    }
+
+    // Initialize
     loadData();
   </script>
 </body>
