@@ -172,7 +172,7 @@
 
     async function loadData() {
       const [tRes, pRes] = await Promise.all([
-        fetch('teams.json'), fetch('players.json')
+        fetch('players.json?v=' + new Date().getTime())
       ]);
       teams = await tRes.json();
       players = await pRes.json();
