@@ -9,6 +9,7 @@
     header { background: #222; padding: 20px; text-align: center; }
     .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     select, button { font-size: 14px; padding: 4px 6px; margin: 4px; }
+    #instructions { text-align: center; padding: 10px; font-size: 16px; background-color: #333; }
     .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
     table {
       margin: 20px 0 20px 3%; width: 94%; max-width: 900px;
@@ -23,7 +24,7 @@
       position: relative; background-size: cover; background-position: center; cursor: pointer;
     }
     .shirt::after {
-      content: "👕"; font-size: 36px; position: absolute;
+      content: "\1F455"; font-size: 36px; position: absolute;
       top: 50%; left: 50%; transform: translate(-50%, -50%);
       color: white; pointer-events: none;
     }
@@ -43,28 +44,34 @@
     }
     .modal h3 { margin-top: 0; }
     .modal ul { list-style: none; padding: 0; margin: 0; }
-    .modal li {
-      padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #ccc;
-    }
+    .modal li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #ccc; }
     .modal li:hover { background: #eee; }
     @media (min-width: 768px) {
       .shirt::after { font-size: 48px; }
-      .shirt.filled::after { font-size: 24px; }
+      .shirt.filled::after { font-size: 24px; font-weight: bold; }
     }
   </style>
 </head>
 <body>
   <header>
+    <div id="instructions">
+      <p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
+    </div>
     <div class="controls">
       <label for="modeSelect">Team Type:</label>
       <select id="modeSelect">
+        <option value="" disabled selected>Select mode</option>
         <option value="legend">Legend Team</option>
         <option value="current">25/26 Team</option>
       </select>
       <label for="leagueSelect">League:</label>
-      <select id="leagueSelect"></select>
+      <select id="leagueSelect">
+        <option value="" disabled selected>Select league</option>
+      </select>
       <label for="teamSelect">Select Team:</label>
-      <select id="teamSelect"></select>
+      <select id="teamSelect">
+        <option value="" disabled selected>Select team</option>
+      </select>
       <label for="formationSelect">Formation:</label>
       <select id="formationSelect">
         <option>4-4-2</option><option>4-3-3</option><option>3-5-2</option>
@@ -93,32 +100,35 @@
       players = await pRes.json();
       const leagues = [...new Set(teams.map(t => t.league))];
       const leagueSelect = document.getElementById('leagueSelect');
-      leagueSelect.innerHTML = '';
+      leagueSelect.innerHTML = '<option value="" disabled selected>Select league</option>';
       leagues.forEach(l => leagueSelect.appendChild(new Option(l, l)));
       leagueSelect.addEventListener('change', updateTeamSelect);
-      document.getElementById('modeSelect').addEventListener('change', updatePitch);
+      document.getElementById('modeSelect').addEventListener('change', updateTeamSelect);
       document.getElementById('teamSelect').addEventListener('change', updatePitch);
       document.getElementById('formationSelect').addEventListener('change', updatePitch);
-      updateTeamSelect();
-      
     }
 
     function updateTeamSelect() {
       const selectedLeague = document.getElementById('leagueSelect').value;
       const ts = document.getElementById('teamSelect');
-      ts.innerHTML = '';
+      ts.innerHTML = '<option value="" disabled selected>Select team</option>';
       teams.filter(t => t.league === selectedLeague)
            .forEach(t => ts.appendChild(new Option(t.team_name, t.team_name)));
-      if (ts.options.length > 0) ts.selectedIndex = 0;
-      updatePitch();
     }
 
     function getPositionType(i, total) {
-      return (['GK','DEF','MID','MID','FWD'])[i] || 'MID';
+      if (i === 0) return 'GK';
+      if (i === total - 1) return 'FWD';
+      if (total === 4 && i === 1) return 'DEF';
+      if (total === 4 && i === 2) return 'MID';
+      if (total === 5 && i === 1) return 'DEF';
+      if (total === 5 && (i === 2 || i === 3)) return 'MID';
+      return 'MID';
     }
 
     function updatePitch() {
       const team = document.getElementById('teamSelect').value;
+      if (!team) return;
       const form = document.getElementById('formationSelect').value;
       const mode = document.getElementById('modeSelect').value;
       const td = teams.find(t => t.team_name === team) || {};
@@ -152,8 +162,7 @@
     function openModal(shirt, opts) {
       const bg = document.createElement('div'); bg.className = 'modal-backdrop';
       const m = document.createElement('div'); m.className = 'modal';
-      m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3><button id="closeModalBtn">\u2716</button></div><ul>${opts.map(o => `<li>${o}</li>`).join('')}</ul>`;
-
+      m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3><button id="closeModalBtn">✖</button></div><ul>${opts.map(o => `<li>${o}</li>`).join('')}</ul>`;
       const closeModal = () => {
         document.body.removeChild(bg);
         document.removeEventListener('keydown', escListener);
@@ -162,7 +171,6 @@
         if (e.key === 'Escape') closeModal();
       });
       m.querySelector('#closeModalBtn')?.addEventListener('click', closeModal);
-
       m.querySelectorAll('li').forEach(li => li.onclick = () => {
         const name = li.textContent, num = shirt.dataset.num;
         shirt.classList.add('filled');
@@ -171,7 +179,6 @@
         closeModal();
         refreshTable();
       });
-
       bg.appendChild(m); document.body.appendChild(bg);
     }
 
@@ -193,8 +200,7 @@
         team: document.getElementById('teamSelect').value,
         formation: document.getElementById('formationSelect').value,
         selections
-      }));
-      alert('Team saved!');
+      })); alert('Team saved!');
     }
 
     function loadTeam() {
