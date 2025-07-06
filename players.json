@@ -612,106 +612,6 @@
     "intl_assists": null
   },
   {
-    "player_name": "Craig Gordon",
-    "position": "GK",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "David Marshall",
-    "position": "GK",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Allan McGregor",
-    "position": "GK",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Andy Robertson",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Kieran Tierney",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Grant Hanley",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Scott McKenna",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Nathan Patterson",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Jack Hendry",
-    "position": "DEF",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Callum McGregor",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "John McGinn",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Scott McTominay",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Billy Gilmour",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Ryan Christie",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Stuart Armstrong",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Kenny McLean",
-    "position": "MID",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Lyndon Dykes",
-    "position": "FWD",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Che Adams",
-    "position": "FWD",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "Kevin Nisbet",
-    "position": "FWD",
-    "team": "Scotland"
-  },
-  {
-    "player_name": "James Forrest",
-    "position": "FWD",
-    "team": "Scotland"
-  },
-    {
     "player_name": "Jim Leighton",
     "position": "GK",
     "team": "Aberdeen",
@@ -1306,7 +1206,7 @@
     "intl_goals": null,
     "intl_assists": null
   },
-    {
+  {
     "player_name": "Andy Goram",
     "position": "GK",
     "team": "Hibs",
@@ -1901,7 +1801,7 @@
     "intl_goals": null,
     "intl_assists": null
   },
-{
+  {
     "player_name": "Andy Goram",
     "position": "GK",
     "team": "Rangers",
@@ -2496,7 +2396,7 @@
     "intl_goals": null,
     "intl_assists": null
   },
-    {
+  {
     "player_name": "Packie Bonner",
     "position": "GK",
     "team": "Celtic",
