@@ -172,7 +172,8 @@
 
     async function loadData() {
       const [tRes, pRes] = await Promise.all([
-        fetch('players.json?v=' + new Date().getTime())
+       fetch('teams.json'),
+    fetch('players.json?v=' + new Date().getTime())  // cache-busting
       ]);
       teams = await tRes.json();
       players = await pRes.json();
