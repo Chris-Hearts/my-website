@@ -219,7 +219,8 @@
         const row = document.createElement('div'); row.className = 'player-row';
         const pos = getPositionType(i, formations[form].length);
         const opts = players
-          .filter(p => p.team === team && p.position === pos)
+  .filter(p => p.team?.trim().toLowerCase() === team.trim().toLowerCase() && p.position === pos)
+
           .sort((a, b) => a.player_name.split(' ').pop().localeCompare(b.player_name.split(' ').pop()))
           .map(p => p.player_name);
         for (let j = 0; j < cnt; j++) {
