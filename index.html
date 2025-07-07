@@ -10,96 +10,42 @@
     .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     select, button { font-size: 14px; padding: 4px 6px; margin: 4px; }
     #instructions { text-align: center; padding: 10px; font-size: 16px; background-color: #333; }
-
-    .pitch-container {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      background: #004400;
-    }
-    .pitch {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .player-row {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .shirt {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 2px solid white;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-    }
-
-    .shirt::after {
-      content: "👕";
-      font-size: 40px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      pointer-events: none;
-    }
-
-    .shirt.filled::after {
-      content: attr(data-initial);
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 1000;
-    }
-
-    .modal {
-      background: #fff;
-      color: #000;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 300px;
-      max-height: 80%;
-      overflow-y: auto;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-    }
-
-    .modal h3 { margin-top: 0; }
-    .modal ul { list-style: none; padding: 0; margin: 0; }
-    .modal li {
-      padding: 8px 12px;
-      cursor: pointer;
-      border-bottom: 1px solid #ccc;
-    }
-    .modal li:hover { background: #eee; }
-
+    .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
     table {
-      margin: 20px auto;
-      width: 90%;
-      max-width: 1000px;
-      border-collapse: collapse;
-      background-color: #eee;
-      color: #000;
+      margin: 20px 0 20px 3%; width: 94%; max-width: 900px;
+      border-collapse: collapse; background-color: #eee; color: #000;
     }
-
     table, th, td { border: 1px solid #888; }
     th, td { padding: 8px 12px; text-align: center; }
     th { background: #ccc; }
-
+    .player-row { display: flex; justify-content: center; gap: 10px; }
+    .shirt {
+      width: 80px; height: 80px; border-radius: 50%; border: 2px solid white;
+      position: relative; background-size: cover; background-position: center; cursor: pointer;
+    }
+    .shirt::after {
+      content: "\1F455"; font-size: 36px; position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: white; pointer-events: none;
+    }
+    .shirt.filled::after {
+      content: attr(data-initial); font-size: 14px; font-weight: bold;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); display: flex; justify-content: center;
+      align-items: center; z-index: 1000;
+    }
+    .modal {
+      background: #fff; color: #000; padding: 20px;
+      border-radius: 8px; max-width: 300px; max-height: 80%;
+      overflow-y: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .modal h3 { margin-top: 0; }
+    .modal ul { list-style: none; padding: 0; margin: 0; }
+    .modal li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #ccc; }
+    .modal li:hover { background: #eee; }
     @media (min-width: 768px) {
       .shirt::after { font-size: 48px; }
       .shirt.filled::after { font-size: 24px; font-weight: bold; }
@@ -133,31 +79,22 @@
         <option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
       </select>
       <div>
-        <button onclick="saveTeam()">💾 Save</button>
+        <button onclick="saveTeam()">📂 Save</button>
         <button onclick="loadTeam()">📂 Load</button>
         <button onclick="screenshot()">🖼️ Screenshot</button>
       </div>
     </div>
   </header>
-
   <div class="pitch-container"><div id="pitch" class="pitch"></div></div>
-
-  <table id="squadTable">
-    <thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead>
-    <tbody></tbody>
-  </table>
-
+  <table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
   <script>
     let teams = [], players = [], selections = {};
-    const formations = {
-      "4-4-2":[1,4,4,2], "4-3-3":[1,4,3,3], "3-5-2":[1,3,5,2],
-      "4-2-3-1":[1,4,2,3,1], "4-1-4-1":[1,4,1,4,1], "3-4-3":[1,3,4,3],
-      "5-3-2":[1,5,3,2], "4-5-1":[1,4,5,1], "3-6-1":[1,3,6,1], "5-4-1":[1,5,4,1]
-    };
+    const formations = {"4-4-2":[1,4,4,2],"4-3-3":[1,4,3,3],"3-5-2":[1,3,5,2],"4-2-3-1":[1,4,2,3,1],"4-1-4-1":[1,4,1,4,1],"3-4-3":[1,3,4,3],"5-3-2":[1,5,3,2],"4-5-1":[1,4,5,1],"3-6-1":[1,3,6,1],"5-4-1":[1,5,4,1]};
 
     async function loadData() {
       const [tRes, pRes] = await Promise.all([
-        fetch('teams.json'), fetch('players.json?v=' + Date.now())
+        fetch('teams.json'),
+        fetch('players.json?v=' + new Date().getTime())
       ]);
       teams = await tRes.json();
       players = await pRes.json();
@@ -170,6 +107,7 @@
       document.getElementById('teamSelect').addEventListener('change', updatePitch);
       document.getElementById('formationSelect').addEventListener('change', updatePitch);
     }
+
 
     function updateTeamSelect() {
       const selectedLeague = document.getElementById('leagueSelect').value;
@@ -222,6 +160,7 @@
       });
     }
 
+    
     function openModal(shirt, opts) {
       const bg = document.createElement('div'); bg.className = 'modal-backdrop';
       const m = document.createElement('div'); m.className = 'modal';
@@ -263,8 +202,7 @@
         team: document.getElementById('teamSelect').value,
         formation: document.getElementById('formationSelect').value,
         selections
-      }));
-      alert('Team saved!');
+      })); alert('Team saved!');
     }
 
     function loadTeam() {
@@ -273,10 +211,7 @@
         document.getElementById('teamSelect').value = s.team;
         document.getElementById('formationSelect').value = s.formation;
         updatePitch();
-        setTimeout(() => {
-          selections = s.selections;
-          refreshTable();
-        }, 50);
+        setTimeout(() => { selections = s.selections; refreshTable(); }, 50);
       }
     }
 
