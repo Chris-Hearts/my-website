@@ -1,24 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Team Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #111; color: #fff; }
-    header { background: #222; padding: 20px; text-align: center; }
-    .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    select, button { font-size: 14px; padding: 4px 6px; margin: 4px; }
-    #instructions { text-align: center; padding: 10px; font-size: 16px; background-color: #333; }
-    .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
+    body {
+      font-family: 'Inter', sans-serif; margin: 0; background: #111; color: #fff;
+    }
+    header {
+      background: #222; padding: 20px 10px; text-align: center;
+    }
+    #instructions {
+      text-align: center; padding: 10px; font-size: 16px;
+      background-color: #333; margin-bottom: 10px;
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center;
+    }
+    select, button {
+      font-size: 14px; padding: 6px 10px; margin: 4px;
+      border-radius: 4px; border: 1px solid #888; background: #fff; color: #000;
+    }
+    button:hover { background-color: #ddd; cursor: pointer; }
+    .pitch-container {
+      display: flex; justify-content: center; padding: 20px; background: linear-gradient(#025802, #014201);
+    }
     table {
-      margin: 20px 0 20px 3%; width: 94%; max-width: 900px;
+      margin: 20px auto; width: 90%; max-width: 900px;
       border-collapse: collapse; background-color: #eee; color: #000;
     }
     table, th, td { border: 1px solid #888; }
     th, td { padding: 8px 12px; text-align: center; }
     th { background: #ccc; }
-    .player-row { display: flex; justify-content: center; gap: 10px; }
+    .player-row {
+      display: flex; justify-content: center; gap: 10px; margin: 10px 0;
+    }
     .shirt {
       width: 80px; height: 80px; border-radius: 50%; border: 2px solid white;
       position: relative; background-size: cover; background-position: center; cursor: pointer;
@@ -44,7 +61,9 @@
     }
     .modal h3 { margin-top: 0; }
     .modal ul { list-style: none; padding: 0; margin: 0; }
-    .modal li { padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #ccc; }
+    .modal li {
+      padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #ccc;
+    }
     .modal li:hover { background: #eee; }
     @media (min-width: 768px) {
       .shirt::after { font-size: 48px; }
@@ -55,12 +74,13 @@
 <body>
   <header>
     <div id="instructions">
-      <p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
+      <strong>Build Your Dream Team:</strong>
+      <p>Select a team type, league, and team before choosing players.</p>
     </div>
     <div class="controls">
       <label for="modeSelect">Team Type:</label>
       <select id="modeSelect">
-        <option value="" disabled selected>Select mode</option>
+        <option value="" disabled selected>Select team type</option>
         <option value="legend">Legend Team</option>
         <option value="current">25/26 Team</option>
       </select>
@@ -68,7 +88,7 @@
       <select id="leagueSelect">
         <option value="" disabled selected>Select league</option>
       </select>
-      <label for="teamSelect">Select Team:</label>
+      <label for="teamSelect">Team:</label>
       <select id="teamSelect">
         <option value="" disabled selected>Select team</option>
       </select>
@@ -78,148 +98,140 @@
         <option>4-2-3-1</option><option>4-1-4-1</option><option>3-4-3</option>
         <option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
       </select>
-      <div>
-        <button onclick="saveTeam()">📂 Save</button>
-        <button onclick="loadTeam()">📂 Load</button>
-        <button onclick="screenshot()">🖼️ Screenshot</button>
-      </div>
+      <button onclick="saveTeam()">💾 Save</button>
+      <button onclick="loadTeam()">📂 Load</button>
+      <button onclick="screenshot()">🖼️ Screenshot</button>
     </div>
   </header>
   <div class="pitch-container"><div id="pitch" class="pitch"></div></div>
-  <table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
+  <table id="squadTable">
+    <thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody>
+  </table>
   <script>
     let teams = [], players = [], selections = {};
-    const formations = {"4-4-2":[1,4,4,2],"4-3-3":[1,4,3,3],"3-5-2":[1,3,5,2],"4-2-3-1":[1,4,2,3,1],"4-1-4-1":[1,4,1,4,1],"3-4-3":[1,3,4,3],"5-3-2":[1,5,3,2],"4-5-1":[1,4,5,1],"3-6-1":[1,3,6,1],"5-4-1":[1,5,4,1]};
+    const formations = {"4-4-2":[1,4,4,2],"4-3-3":[1,4,3,3],"3-5-2":[1,3,5,2],"4-2-3-1":[1,4,2,3,1],"4-1-4-1":[1,4,1,4,1],"3-4-3":[1,3,4,3],"5-3-2":[1,5,3,2],"4-5-1":[1,4,5,1],"3-6-1":[1,3,6,1],"5-4-1":[1,5,4,1]};async function loadData() {
+  const [tRes, pRes] = await Promise.all([
+    fetch('teams.json'),
+    fetch('players.json?v=' + new Date().getTime())
+  ]);
+  teams = await tRes.json();
+  players = await pRes.json();
+  const leagues = [...new Set(teams.map(t => t.league))];
+  const leagueSelect = document.getElementById('leagueSelect');
+  leagueSelect.innerHTML += leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+  leagueSelect.addEventListener('change', updateTeamSelect);
+  document.getElementById('modeSelect').addEventListener('change', updateTeamSelect);
+  document.getElementById('teamSelect').addEventListener('change', updatePitch);
+  document.getElementById('formationSelect').addEventListener('change', updatePitch);
+}
 
-    async function loadData() {
-      const [tRes, pRes] = await Promise.all([
-        fetch('teams.json'),
-        fetch('players.json?v=' + new Date().getTime())
-      ]);
-      teams = await tRes.json();
-      players = await pRes.json();
-      const leagues = [...new Set(teams.map(t => t.league))];
-      const leagueSelect = document.getElementById('leagueSelect');
-      leagueSelect.innerHTML = '<option value="" disabled selected>Select league</option>';
-      leagues.forEach(l => leagueSelect.appendChild(new Option(l, l)));
-      leagueSelect.addEventListener('change', updateTeamSelect);
-      document.getElementById('modeSelect').addEventListener('change', updateTeamSelect);
-      document.getElementById('teamSelect').addEventListener('change', updatePitch);
-      document.getElementById('formationSelect').addEventListener('change', updatePitch);
+function updateTeamSelect() {
+  const league = document.getElementById('leagueSelect').value;
+  const ts = document.getElementById('teamSelect');
+  ts.innerHTML = '<option value="" disabled selected>Select team</option>';
+  teams.filter(t => t.league === league).forEach(t => {
+    const o = document.createElement('option');
+    o.value = o.text = t.team_name;
+    ts.appendChild(o);
+  });
+}
+
+function getPositionType(i, total) {
+  if (i === 0) return 'GK';
+  if (i === total - 1) return 'FWD';
+  if (total >= 4 && i === 1) return 'DEF';
+  if (total >= 4 && i === 2) return 'MID';
+  return 'MID';
+}
+
+function updatePitch() {
+  const team = document.getElementById('teamSelect').value;
+  const form = document.getElementById('formationSelect').value;
+  const mode = document.getElementById('modeSelect').value;
+  if (!team || !mode) return;
+  const td = teams.find(t => t.team_name === team) || {};
+  const pitch = document.getElementById('pitch');
+  pitch.innerHTML = '';
+  pitch.style.backgroundColor = td.primary_color || '#0a4d0a';
+  selections = {};
+  document.querySelector('#squadTable tbody').innerHTML = '';
+  let num = 1;
+  (formations[form] || []).forEach((cnt, i) => {
+    const row = document.createElement('div'); row.className = 'player-row';
+    const pos = getPositionType(i, formations[form].length);
+    const opts = players.filter(p =>
+      p.team?.trim().toLowerCase() === team.trim().toLowerCase() &&
+      p.position === pos && (mode === 'legend' ? p.is_legend : !p.is_legend)
+    ).map(p => p.player_name);
+    for (let j = 0; j < cnt; j++) {
+      const shirt = document.createElement('div'); shirt.className = 'shirt';
+      shirt.dataset.num = num; shirt.dataset.pos = pos; shirt.dataset.initial = '';
+      shirt.style.backgroundColor = td.primary_color;
+      shirt.style.borderColor = td.secondary_color;
+      shirt.title = "Click to select player";
+      shirt.addEventListener('click', () => openModal(shirt, opts));
+      row.appendChild(shirt); num++;
     }
+    pitch.appendChild(row);
+  });
+}
 
+function openModal(shirt, opts) {
+  const bg = document.createElement('div'); bg.className = 'modal-backdrop';
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3><button id="closeModalBtn">✖</button></div><ul>${opts.map(o => `<li>${o}</li>`).join('')}</ul>`;
+  const closeModal = () => { document.body.removeChild(bg); document.removeEventListener('keydown', escListener); };
+  document.addEventListener('keydown', escListener = e => { if (e.key === 'Escape') closeModal(); });
+  m.querySelector('#closeModalBtn')?.addEventListener('click', closeModal);
+  m.querySelectorAll('li').forEach(li => li.onclick = () => {
+    const name = li.textContent, num = shirt.dataset.num;
+    shirt.classList.add('filled');
+    shirt.dataset.initial = name.split(' ').pop();
+    selections[num] = { name, pos: shirt.dataset.pos };
+    closeModal();
+    refreshTable();
+  });
+  bg.appendChild(m); document.body.appendChild(bg);
+}
 
-    function updateTeamSelect() {
-      const selectedLeague = document.getElementById('leagueSelect').value;
-      const ts = document.getElementById('teamSelect');
-      ts.innerHTML = '<option value="" disabled selected>Select team</option>';
-      teams.filter(t => t.league === selectedLeague)
-           .forEach(t => ts.appendChild(new Option(t.team_name, t.team_name)));
-    }
+function refreshTable() {
+  const tbody = document.querySelector('#squadTable tbody');
+  tbody.innerHTML = '';
+  const arr = Object.entries(selections).map(([n, s]) => ({ num: +n, ...s }));
+  const order = { GK: 1, DEF: 2, MID: 3, FWD: 4 };
+  arr.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
+  arr.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
+    tbody.appendChild(tr);
+  });
+}
 
-    function getPositionType(i, total) {
-      if (i === 0) return 'GK';
-      if (i === total - 1) return 'FWD';
-      if (total === 4 && i === 1) return 'DEF';
-      if (total === 4 && i === 2) return 'MID';
-      if (total === 5 && i === 1) return 'DEF';
-      if (total === 5 && (i === 2 || i === 3)) return 'MID';
-      return 'MID';
-    }
+function saveTeam() {
+  localStorage.setItem('savedTeam', JSON.stringify({
+    team: document.getElementById('teamSelect').value,
+    formation: document.getElementById('formationSelect').value,
+    selections
+  }));
+  alert('Team saved!');
+}
 
-    function updatePitch() {
-      const team = document.getElementById('teamSelect').value;
-      if (!team) return;
-      const form = document.getElementById('formationSelect').value;
-      const mode = document.getElementById('modeSelect').value;
-      const td = teams.find(t => t.team_name === team) || {};
-      const pitch = document.getElementById('pitch');
-      pitch.innerHTML = '';
-      pitch.style.backgroundColor = td.primary_color || '#0a4d0a';
-      selections = {};
-      document.querySelector('#squadTable tbody').innerHTML = '';
-      let num = 1;
-      (formations[form] || []).forEach((cnt, i) => {
-        const row = document.createElement('div'); row.className = 'player-row';
-        const pos = getPositionType(i, formations[form].length);
-        const opts = players.filter(p =>
-          p.team?.trim().toLowerCase() === team.trim().toLowerCase() &&
-          p.position === pos &&
-          (mode === 'legend' ? p.is_legend : !p.is_legend)
-        ).map(p => p.player_name);
-        for (let j = 0; j < cnt; j++) {
-          const shirt = document.createElement('div');
-          shirt.className = 'shirt';
-          shirt.dataset.num = num; shirt.dataset.pos = pos; shirt.dataset.initial = '';
-          shirt.style.backgroundColor = td.primary_color;
-          shirt.style.borderColor = td.secondary_color;
-          shirt.addEventListener('click', () => openModal(shirt, opts));
-          row.appendChild(shirt); num++;
-        }
-        pitch.appendChild(row);
-      });
-    }
+function loadTeam() {
+  const s = JSON.parse(localStorage.getItem('savedTeam') || '{}');
+  if (s.selections) {
+    document.getElementById('teamSelect').value = s.team;
+    document.getElementById('formationSelect').value = s.formation;
+    updatePitch();
+    setTimeout(() => { selections = s.selections; refreshTable(); }, 50);
+  }
+}
 
-    
-    function openModal(shirt, opts) {
-      const bg = document.createElement('div'); bg.className = 'modal-backdrop';
-      const m = document.createElement('div'); m.className = 'modal';
-      m.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3><button id="closeModalBtn">✖</button></div><ul>${opts.map(o => `<li>${o}</li>`).join('')}</ul>`;
-      const closeModal = () => {
-        document.body.removeChild(bg);
-        document.removeEventListener('keydown', escListener);
-      };
-      document.addEventListener('keydown', escListener = e => {
-        if (e.key === 'Escape') closeModal();
-      });
-      m.querySelector('#closeModalBtn')?.addEventListener('click', closeModal);
-      m.querySelectorAll('li').forEach(li => li.onclick = () => {
-        const name = li.textContent, num = shirt.dataset.num;
-        shirt.classList.add('filled');
-        shirt.dataset.initial = name.split(' ').pop();
-        selections[num] = { name, pos: shirt.dataset.pos };
-        closeModal();
-        refreshTable();
-      });
-      bg.appendChild(m); document.body.appendChild(bg);
-    }
+function screenshot() {
+  alert("Use your device's screenshot feature.");
+}
 
-    function refreshTable() {
-      const tbody = document.querySelector('#squadTable tbody');
-      tbody.innerHTML = '';
-      const arr = Object.entries(selections).map(([n, s]) => ({ num: +n, ...s }));
-      const order = { GK: 1, DEF: 2, MID: 3, FWD: 4 };
-      arr.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
-      arr.forEach(s => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
+loadData();
 
-    function saveTeam() {
-      localStorage.setItem('savedTeam', JSON.stringify({
-        team: document.getElementById('teamSelect').value,
-        formation: document.getElementById('formationSelect').value,
-        selections
-      })); alert('Team saved!');
-    }
-
-    function loadTeam() {
-      const s = JSON.parse(localStorage.getItem('savedTeam') || '{}');
-      if (s.selections) {
-        document.getElementById('teamSelect').value = s.team;
-        document.getElementById('formationSelect').value = s.formation;
-        updatePitch();
-        setTimeout(() => { selections = s.selections; refreshTable(); }, 50);
-      }
-    }
-
-    function screenshot() {
-      alert("Use your device's screenshot feature.");
-    }
-
-    loadData();
   </script>
 </body>
 </html>
