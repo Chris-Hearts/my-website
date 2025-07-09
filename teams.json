@@ -26,7 +26,6 @@
   { "team_name": "Wolverhampton Wanderers", "league": "English Premier League", "primary_color": "#FDB913", "secondary_color": "#000000", "logo_url": "https://upload.wikimedia.org/wikipedia/en/f/fc/Wolverhampton_Wanderers.svg" },
   { "team_name": "Borussia Dortmund", "league": "Bundesliga", "primary_color": "#FDE100", "secondary_color": "#000000", "logo_url": "https://upload.wikimedia.org/wikipedia/commons/6/67/Borussia_Dortmund_logo.svg" },
   { "team_name": "Bayern Munich", "league": "Bundesliga", "primary_color": "#DC052D", "secondary_color": "#FFFFFF", "logo_url": "https://upload.wikimedia.org/wikipedia/en/1/1f/FC_Bayern_Munich_logo_%282017%29.svg" },
-  { "team_name": "RB Leipzig", "league": "Bundesliga", "primary_color": "#FFFFFF", "secondary_color": "#E30613", "logo_url": "https://upload.wikimedia.org/wikipedia/en/0/04/RB_Leipzig_2014_logo.svg" },
 
   { "team_name": "AC Milan", "league": "Serie A", "primary_color": "#FB090B", "secondary_color": "#000000", "logo_url": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Logo_of_AC_Milan.svg" },
   { "team_name": "Inter Milan", "league": "Serie A", "primary_color": "#00529F", "secondary_color": "#000000", "logo_url": "https://upload.wikimedia.org/wikipedia/en/0/0b/Inter_Milan.svg" },
