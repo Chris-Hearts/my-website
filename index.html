@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Team Builder</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Team Builder</title>
+<style>
     body { font-family: Arial, sans-serif; margin: 0; background: #111; color: #fff; }
     header { background: #222; padding: 20px; text-align: center; }
     .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -141,44 +142,41 @@
   </style>
 </head>
 <body>
-  <header>
-    <div id="instructions">
-      <p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
-    </div>
-    <div class="controls">
-      <label for="modeSelect">Team Type:</label>
-      <select id="modeSelect">
-        <option value="" disabled selected>Select mode</option>
-        <option value="legend">Legend Team</option>
-        <option value="current">25/26 Team</option>
-      </select>
-      <label for="leagueSelect">League:</label>
-      <select id="leagueSelect">
-        <option value="" disabled selected>Select league</option>
-      </select>
-      <label for="teamSelect">Select Team:</label>
-      <select id="teamSelect">
-        <option value="" disabled selected>Select team</option>
-      </select>
-      <label for="formationSelect">Formation:</label>
-      <select id="formationSelect">
-        <option>4-4-2</option><option>4-3-3</option><option>3-5-2</option>
-        <option>4-2-3-1</option><option>4-1-4-1</option><option>3-4-3</option>
-        <option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
-      </select>
-      <div>
-        <button onclick="saveTeam()">💾 Save</button>
-        <button onclick="loadTeam()">📂 Load</button>
-        <button onclick="screenshot()">🖼️ Screenshot</button>
-      </div>
-    </div>
-  </header>
-
-  <div class="pitch-container"><div id="pitch" class="pitch"></div></div>
-
-  <table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
-
-  <script>
+<header>
+<div id="instructions">
+<p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
+</div>
+<div class="controls">
+<label for="modeSelect">Team Type:</label>
+<select id="modeSelect">
+<option disabled="" selected="" value="">Select mode</option>
+<option value="legend">Legend Team</option>
+<option value="current">25/26 Team</option>
+</select>
+<label for="leagueSelect">League:</label>
+<select id="leagueSelect">
+<option disabled="" selected="" value="">Select league</option>
+</select>
+<label for="teamSelect">Select Team:</label>
+<select id="teamSelect">
+<option disabled="" selected="" value="">Select team</option>
+</select>
+<label for="formationSelect">Formation:</label>
+<select id="formationSelect">
+<option>4-4-2</option><option>4-3-3</option><option>3-5-2</option>
+<option>4-2-3-1</option><option>4-1-4-1</option><option>3-4-3</option>
+<option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
+</select>
+<div>
+<button onclick="saveTeam()">💾 Save</button>
+<button onclick="loadTeam()">📂 Load</button>
+<button onclick="screenshot()">🖼️ Screenshot</button>
+</div>
+</div>
+</header>
+<div class="pitch-container"><div class="pitch" id="pitch"></div></div>
+<table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
+<script>
 
 let teams = [], players = [], selections = {};
 const formations = {
@@ -271,7 +269,7 @@ function openModal(shirt, opts) {
 
   const tableRows = filteredPlayers.map(p => `
     <tr data-name="${p.player_name}">
-      <td><img src="${p.image_url}" alt="${p.player_name}" onerror="this.src='fallback.jpg'"></td>
+      
       <td>${p.player_name}</td>
       <td>${p.nationality}</td>
       <td>${p.years_active || ''}</td>
@@ -289,7 +287,7 @@ function openModal(shirt, opts) {
       <table>
         <thead>
           <tr>
-            <th>Image</th><th>Name</th><th>Nationality</th><th>Years Active</th>
+            <th>Name</th><th>Nationality</th><th>Years Active</th>
             <th>Club Apps</th><th>Club Goals</th><th>Intl Apps</th><th>Intl Goals</th>
           </tr>
         </thead>
