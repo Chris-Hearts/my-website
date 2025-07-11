@@ -171,10 +171,19 @@ function updatePitch() {
       shirt.style.backgroundColor = td.primary_color;
       shirt.style.borderColor = td.secondary_color;
       shirt.addEventListener('click', () => openModal(shirt, opts));
+      shirt.setAttribute('draggable', true);
+      shirt.addEventListener('dragstart', onDragStart);
+      shirt.addEventListener('dragover', onDragOver);
+      shirt.addEventListener('drop', onDrop);
       row.appendChild(shirt); num++;
     }
     pitch.appendChild(row);
   });
+}
+
+function isNationalTeam(name) {
+  const natTeams = ["england", "brazil", "germany", "france", "spain", "italy", "portugal", "netherlands", "argentina", "belgium"];
+  return natTeams.includes(name?.toLowerCase());
 }
 
 function openModal(shirt, opts) {
@@ -185,7 +194,14 @@ function openModal(shirt, opts) {
 
   const selectedNames = new Set(Object.values(selections).map(s => s.name));
   const seen = new Set();
-  const filteredPlayers = players.filter(p => {
+
+  const sortedPlayers = [...players].sort((a, b) => {
+    const aIsNat = isNationalTeam(a.team);
+    const bIsNat = isNationalTeam(b.team);
+    return aIsNat - bIsNat; // Prefer club over country
+  });
+
+  const filteredPlayers = sortedPlayers.filter(p => {
     const key = `${p.player_name.toLowerCase()}|${p.position}`;
     if (seen.has(key)) return false;
     seen.add(key);
@@ -292,6 +308,62 @@ function loadTeam() {
 function screenshot() {
   alert("Use your device's screenshot feature.");
 }
+
+// DRAG AND DROP SUPPORT
+let draggedShirt = null;
+
+function onDragStart(e) {
+  draggedShirt = e.currentTarget;
+  e.dataTransfer.setData('text/plain', draggedShirt.dataset.num);
+}
+
+function onDragOver(e) {
+  e.preventDefault();
+  const targetShirt = e.currentTarget;
+  if (canDropHere(draggedShirt, targetShirt)) {
+    targetShirt.style.outline = '2px dashed yellow';
+  } else {
+    targetShirt.style.outline = '2px dashed red';
+  }
+}
+
+function onDrop(e) {
+  e.preventDefault();
+  const targetShirt = e.currentTarget;
+  targetShirt.style.outline = '';
+
+  if (!canDropHere(draggedShirt, targetShirt)) return;
+
+  const fromNum = draggedShirt.dataset.num;
+  const toNum = targetShirt.dataset.num;
+
+  const temp = selections[fromNum];
+  selections[fromNum] = selections[toNum];
+  selections[toNum] = temp;
+
+  updateShirtDisplay(draggedShirt, selections[fromNum]);
+  updateShirtDisplay(targetShirt, selections[toNum]);
+  refreshTable();
+}
+
+function canDropHere(from, to) {
+  if (!from || !to) return false;
+  return from.dataset.pos === to.dataset.pos;
+}
+
+function updateShirtDisplay(shirt, player) {
+  if (player && player.name) {
+    shirt.classList.add('filled');
+    shirt.dataset.initial = player.name.split(' ').pop();
+  } else {
+    shirt.classList.remove('filled');
+    shirt.dataset.initial = '';
+  }
+}
+
+document.addEventListener('dragend', () => {
+  document.querySelectorAll('.shirt').forEach(s => s.style.outline = '');
+});
 
 loadData();
 </script>
