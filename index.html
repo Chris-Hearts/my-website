@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -176,8 +175,8 @@
 </header>
 <div class="pitch-container"><div class="pitch" id="pitch"></div></div>
 <table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
-<script>
 
+<script>
 let teams = [], players = [], selections = {};
 const formations = {
   "4-4-2":[1,4,4,2], "4-3-3":[1,4,3,3], "3-5-2":[1,3,5,2],
@@ -261,7 +260,7 @@ function openModal(shirt, opts) {
   const selectedNames = new Set(Object.values(selections).map(s => s.name));
   const seen = new Set();
   const filteredPlayers = players.filter(p => {
-    const key = `${p.player_name}|${p.position}|${p.team}`;
+    const key = `${p.player_name.toLowerCase()}|${p.team?.toLowerCase()}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return opts.includes(p.player_name) && !selectedNames.has(p.player_name);
@@ -269,7 +268,6 @@ function openModal(shirt, opts) {
 
   const tableRows = filteredPlayers.map(p => `
     <tr data-name="${p.player_name}">
-      
       <td>${p.player_name}</td>
       <td>${p.nationality}</td>
       <td>${p.years_active || ''}</td>
@@ -363,7 +361,6 @@ function screenshot() {
 }
 
 loadData();
-
-  </script>
+</script>
 </body>
 </html>
