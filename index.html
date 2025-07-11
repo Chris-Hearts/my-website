@@ -267,9 +267,10 @@ function openModal(shirt, opts) {
     return opts.includes(p.player_name) && !selectedNames.has(p.player_name);
   });
 
-  const tableRows = filteredPlayers.map(p => 
-   const key = `${p.player_name}|${p.position}|${p.team}`;
-      
+  const tableRows = filteredPlayers.map(p => {
+  const key = `${p.player_name}|${p.position}|${p.team}`;
+  return `
+    <tr data-name="${p.player_name}">
       <td>${p.player_name}</td>
       <td>${p.nationality}</td>
       <td>${p.years_active || ''}</td>
@@ -278,7 +279,9 @@ function openModal(shirt, opts) {
       <td>${p.intl_appearances || 0}</td>
       <td>${p.intl_goals || 0}</td>
     </tr>
-  ).join('');
+  `;
+}).join('');
+
 
   m.innerHTML = 
     <button id="closeModalBtn">✖</button>
