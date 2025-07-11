@@ -275,10 +275,17 @@ function loadTeam() {
     document.getElementById('teamSelect').value = s.team;
     document.getElementById('formationSelect').value = s.formation;
     updatePitch();
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       selections = s.selections;
+      Object.entries(selections).forEach(([num, player]) => {
+        const shirt = document.querySelector(`.shirt[data-num="${num}"]`);
+        if (shirt) {
+          shirt.classList.add('filled');
+          shirt.dataset.initial = player.name.split(' ').pop();
+        }
+      });
       refreshTable();
-    }, 50);
+    });
   }
 }
 
