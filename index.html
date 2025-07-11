@@ -267,10 +267,9 @@ function openModal(shirt, opts) {
     return opts.includes(p.player_name) && !selectedNames.has(p.player_name);
   });
 
-  const tableRows = filteredPlayers.map(p => {
-  const key = `${p.player_name}|${p.position}|${p.team}`;
-  return `
+  const tableRows = filteredPlayers.map(p => `
     <tr data-name="${p.player_name}">
+      
       <td>${p.player_name}</td>
       <td>${p.nationality}</td>
       <td>${p.years_active || ''}</td>
@@ -279,11 +278,9 @@ function openModal(shirt, opts) {
       <td>${p.intl_appearances || 0}</td>
       <td>${p.intl_goals || 0}</td>
     </tr>
-  `;
-}).join('');
+  `).join('');
 
-
-  m.innerHTML = 
+  m.innerHTML = `
     <button id="closeModalBtn">✖</button>
     <h3>Select ${shirt.dataset.pos} #${shirt.dataset.num}</h3>
     <div style="overflow-x:auto">
@@ -297,7 +294,7 @@ function openModal(shirt, opts) {
         <tbody>${tableRows}</tbody>
       </table>
     </div>
-  ;
+  `;
 
   const closeModal = () => {
     document.body.removeChild(bg);
@@ -370,3 +367,5 @@ loadData();
   </script>
 </body>
 </html>
+
+
