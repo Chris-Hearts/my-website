@@ -268,7 +268,7 @@ function openModal(shirt, opts) {
   });
 
   const tableRows = filteredPlayers.map(p => 
-    <tr data-name="${p.player_name}">
+   const key = `${p.player_name}|${p.position}|${p.team}`;
       
       <td>${p.player_name}</td>
       <td>${p.nationality}</td>
@@ -331,7 +331,7 @@ function refreshTable() {
   arr.sort((a, b) => order[a.pos] - order[b.pos] || a.num - b.num);
   arr.forEach(s => {
     const tr = document.createElement('tr');
-    tr.innerHTML = <td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>;
+    tr.innerHTML = `<td>${s.num}</td><td>${s.name}</td><td>${s.pos}</td>`;
     tbody.appendChild(tr);
   });
 }
