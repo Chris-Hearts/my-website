@@ -1,139 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Team Builder</title>
-<style>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Team Builder</title>
+  <style>
     body { font-family: Arial, sans-serif; margin: 0; background: #111; color: #fff; }
     header { background: #222; padding: 20px; text-align: center; }
     .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
     select, button { font-size: 14px; padding: 4px 6px; margin: 4px; }
     #instructions { text-align: center; padding: 10px; font-size: 16px; background-color: #333; }
-
-    .pitch-container {
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      background: #004400;
-    }
-
-    .pitch {
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
-      width: 100%;
-      max-width: 1100px;
-    }
-
-    .player-row {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-    }
-
+    .pitch-container { display: flex; justify-content: center; padding: 20px; background: #004400; }
+    .pitch { display: flex; flex-direction: column; gap: 30px; width: 100%; max-width: 1100px; }
+    .player-row { display: flex; justify-content: center; gap: 14px; }
     .shirt {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 2px solid white;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 90px; height: 90px; border-radius: 50%;
+      border: 2px solid white; position: relative;
+      background-size: cover; background-position: center;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-
     .shirt::after {
-      content: "👕";
-      font-size: 36px;
-      color: white;
-      pointer-events: none;
+      content: "👕"; font-size: 36px; color: white; pointer-events: none;
     }
-
     .shirt.filled::after {
-      content: attr(data-initial);
-      font-size: 14px;
-      font-weight: bold;
-      max-width: 80%;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      content: attr(data-initial); font-size: 14px; font-weight: bold;
+      max-width: 80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
     .modal-backdrop {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;
     }
-
     .modal {
-      background: #fff;
-      color: #000;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 800px;
-      max-height: 80%;
-      overflow-y: auto;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-      position: relative;
+      background: #fff; color: #000; padding: 20px; border-radius: 8px;
+      max-width: 800px; max-height: 80%; overflow-y: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.5); position: relative;
     }
-
     .modal h3 { margin: 0 0 10px 0; }
-
     .modal button#closeModalBtn {
-      position: absolute;
-      top: 8px;
-      right: 10px;
-      border: none;
-      background: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #000;
+      position: absolute; top: 8px; right: 10px; border: none;
+      background: none; font-size: 20px; cursor: pointer; color: #000;
     }
-
     .modal table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+      width: 100%; border-collapse: collapse; font-size: 13px;
     }
-
     .modal th, .modal td {
-      border: 1px solid #ccc;
-      padding: 6px;
-      text-align: center;
-      vertical-align: middle;
+      border: 1px solid #ccc; padding: 6px; text-align: center; vertical-align: middle;
     }
-
-    .modal tr:hover {
-      background: #ddd;
-      cursor: pointer;
-    }
-
-    .modal td img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
+    .modal tr:hover { background: #ddd; cursor: pointer; }
     table {
-      margin: 20px auto;
-      width: 90%;
-      max-width: 1000px;
-      border-collapse: collapse;
-      background-color: #eee;
-      color: #000;
+      margin: 20px auto; width: 90%; max-width: 1000px;
+      border-collapse: collapse; background-color: #eee; color: #000;
     }
-
     table, th, td { border: 1px solid #888; }
     th, td { padding: 8px 12px; text-align: center; }
     th { background: #ccc; }
-
     @media (min-width: 768px) {
       .shirt::after { font-size: 48px; }
       .shirt.filled::after { font-size: 20px; font-weight: bold; }
@@ -142,46 +61,53 @@
 </head>
 <body>
 <header>
-<div id="instructions">
-<p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
-</div>
-<div class="controls">
-<label for="modeSelect">Team Type:</label>
-<select id="modeSelect">
-<option disabled="" selected="" value="">Select mode</option>
-<option value="legend">Legend Team</option>
-<option value="current">25/26 Team</option>
-</select>
-<label for="leagueSelect">League:</label>
-<select id="leagueSelect">
-<option disabled="" selected="" value="">Select league</option>
-</select>
-<label for="teamSelect">Select Team:</label>
-<select id="teamSelect">
-<option disabled="" selected="" value="">Select team</option>
-</select>
-<label for="formationSelect">Formation:</label>
-<select id="formationSelect">
-<option>4-4-2</option><option>4-3-3</option><option>3-5-2</option>
-<option>4-2-3-1</option><option>4-1-4-1</option><option>3-4-3</option>
-<option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
-</select>
-<div>
-<button onclick="saveTeam()">💾 Save</button>
-<button onclick="loadTeam()">📂 Load</button>
-<button onclick="screenshot()">🖼️ Screenshot</button>
-</div>
-</div>
+  <div id="instructions">
+    <p><strong>Get started:</strong> Select a mode, then a league, then a team to build your squad.</p>
+  </div>
+  <div class="controls">
+    <label for="modeSelect">Team Type:</label>
+    <select id="modeSelect">
+      <option disabled selected value="">Select mode</option>
+      <option value="legend">Legend Team</option>
+      <option value="current">25/26 Team</option>
+    </select>
+    <label for="leagueSelect">League:</label>
+    <select id="leagueSelect">
+      <option disabled selected value="">Select league</option>
+    </select>
+    <label for="teamSelect">Select Team:</label>
+    <select id="teamSelect">
+      <option disabled selected value="">Select team</option>
+    </select>
+    <label for="formationSelect">Formation:</label>
+    <select id="formationSelect">
+      <option>4-4-2</option><option>4-3-3</option><option>3-5-2</option>
+      <option>4-2-3-1</option><option>4-1-4-1</option><option>3-4-3</option>
+      <option>5-3-2</option><option>4-5-1</option><option>3-6-1</option><option>5-4-1</option>
+    </select>
+    <div>
+      <button onclick="saveTeam()">💾 Save</button>
+      <button onclick="loadTeam()">📂 Load</button>
+      <button onclick="screenshot()">🖼️ Screenshot</button>
+    </div>
+  </div>
 </header>
-<div class="pitch-container"><div class="pitch" id="pitch"></div></div>
-<table id="squadTable"><thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead><tbody></tbody></table>
+
+<div class="pitch-container">
+  <div class="pitch" id="pitch"></div>
+</div>
+
+<table id="squadTable">
+  <thead><tr><th>#</th><th>Name</th><th>Position</th></tr></thead>
+  <tbody></tbody>
+</table>
 
 <script>
 let teams = [], players = [], selections = {};
 const formations = {
-  "4-4-2":[1,4,4,2], "4-3-3":[1,4,3,3], "3-5-2":[1,3,5,2],
-  "4-2-3-1":[1,4,2,3,1], "4-1-4-1":[1,4,1,4,1], "3-4-3":[1,3,4,3],
-  "5-3-2":[1,5,3,2], "4-5-1":[1,4,5,1], "3-6-1":[1,3,6,1], "5-4-1":[1,5,4,1]
+  "4-4-2": [1, 4, 4, 2], "4-3-3": [1, 4, 3, 3], "3-5-2": [1, 3, 5, 2],
+  "4-2-3-1": [1, 4, 2, 3, 1], "4-1-4-1": [1, 4, 1, 4, 1], "3-4-3": [1, 3, 4, 3],
+  "5-3-2": [1, 5, 3, 2], "4-5-1": [1, 4, 5, 1], "3-6-1": [1, 3, 6, 1], "5-4-1": [1, 5, 4, 1]
 };
 
 async function loadData() {
@@ -260,7 +186,7 @@ function openModal(shirt, opts) {
   const selectedNames = new Set(Object.values(selections).map(s => s.name));
   const seen = new Set();
   const filteredPlayers = players.filter(p => {
-    const key = `${p.player_name.toLowerCase()}|${p.team?.toLowerCase()}`;
+    const key = `${p.player_name.toLowerCase()}|${p.position}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return opts.includes(p.player_name) && !selectedNames.has(p.player_name);
