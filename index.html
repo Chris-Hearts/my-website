@@ -261,7 +261,7 @@ function openModal(shirt, opts) {
   const selectedNames = new Set(Object.values(selections).map(s => s.name));
   const seen = new Set();
   const filteredPlayers = players.filter(p => {
-    const key = ${p.player_name}|${p.position}|${p.team};
+    const key = `${p.player_name}|${p.position}|${p.team}`;
     if (seen.has(key)) return false;
     seen.add(key);
     return opts.includes(p.player_name) && !selectedNames.has(p.player_name);
